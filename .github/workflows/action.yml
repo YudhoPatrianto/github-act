@@ -15,9 +15,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           df -h
-          
-      - name: Check Current Dir
-      run: |
-      df -h $PWD
-      echo $PWD
-      
+
+      - name: Check Location
+        run: |
+          df -h $PWD
+          echo $PWD
