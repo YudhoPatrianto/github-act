@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -24,5 +24,48 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get upgrade -y
 
-        
+      - name: Setup Git Profile
+        run: |
+          git config --global user.name YudhoPatrianto
+          git config --global user.email kydh01123@gmail.com
 
+      - name: Installing Packages 
+        run: |
+          sudo apt-get install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev repo -y
+
+      - name: Create Folder  
+        run: |
+          mkdir twrp
+          cd twrp
+
+      - name: Clone Sources 
+        run: |
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+
+      - name: Sync Sources TWRP 
+        run: |
+          repo sync -j$(nproc --all)
+
+      - name: Clone Device Tree
+        run: |
+          git clone https://github.com/YudhoPatrianto/recovery_device_xiaomi_fire -b 14 device/xiaomi/fire
+
+      - name: Setup Enviromment
+        run: |
+          export ALLOW_MISSING_DEPENDENCIES=true
+
+      - name: Build Progress
+        run: |
+          source build/envsetup.sh
+          lunch twrp_fire-eng
+
+      - name: Build !
+        run: |
+          mka bootimage
+
+      - name: Post
+        run: |
+          cp out/target/product/fire/*.img $GITHUB_WORKSPACE/twrp
+          curl --upload-file $(echo $GITHUB_WORKSPACE)/twrp/*.img https://free.keep.sh
+
+      - name: Done!
