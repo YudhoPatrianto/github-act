@@ -11,10 +11,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Get Files
-        uses: actions/checkout@main
-
-      - name: Enter Directory
+      - name: Check Disk
         run: |
           cd $GITHUB_WORKSPACE
-          echo Hello World
+          df -h
