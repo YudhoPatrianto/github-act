@@ -1,0 +1,20 @@
+name: CI Build - Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Get Files
+        uses: actions/checkout@main
+
+      - name: Enter Directory
+        run: |
+          cd $GITHUB_WORKSPACE
+          echo Hello World
