@@ -9,12 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read&write
+      contents: write
     steps:
       - name: Check Disk
         run: |
           cd $GITHUB_WORKSPACE
           df -h
+          
       - name: Check Current Dir
       run: |
       df -h $PWD
