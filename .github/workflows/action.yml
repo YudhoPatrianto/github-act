@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -67,5 +67,3 @@ jobs:
         run: |
           cp out/target/product/fire/*.img $GITHUB_WORKSPACE/twrp
           curl --upload-file $(echo $GITHUB_WORKSPACE)/twrp/*.img https://free.keep.sh
-
-      - name: Done!
