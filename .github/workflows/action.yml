@@ -50,7 +50,7 @@ jobs:
       - name: Create Folder Recovery Build 
         run: |
           mkdir recovery_${{ github.event.inputs.TARGET_CODENAME }}
-          cd ${{ github.event.inputs.TARGET_CODENAME }}
+          cd recovery_${{ github.event.inputs.TARGET_CODENAME }}
 
       - name: Check Folder 
         run: |
