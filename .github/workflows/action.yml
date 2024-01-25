@@ -34,8 +34,8 @@ jobs:
     permissions:
       contents: write
     steps:
-    - name: Cleanup
-      uses: rokibhasansagar/slimhub_actions@main
+      - name: Cleanup Disk
+        uses: rokibhasansagar/slimhub_actions@main
       
       - name: Update And Upgrade Dependency 
         run: |
