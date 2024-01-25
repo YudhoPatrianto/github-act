@@ -10,11 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    steps:
-      - name: Enter Directory Builder 
-        run: |
-          cd $GITHUB_WORKSPACE
-          
+    steps:          
       - name: Check Space 
         run: |
           df -h
