@@ -1,7 +1,6 @@
 name: Build Recovery By YudhoPRJKT
 
 on:
-  push:
     branches:
       - main
   workflow_dispatch:
