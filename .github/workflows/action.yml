@@ -59,8 +59,7 @@ jobs:
           
       - name: Create Folder Recovery Build 
         run: |
-          sudo mkdir $PWD/recoveryBUILDER
-          cd $PWD/recoveryBUILDER
+          sudo mkdir $HOME/twrp_${{ github.event.inputs.TARGET_CODENAME }} && cd $HOME/twrp_${{ github.event.inputs.TARGET_CODENAME }}
 
       - name: Check Folder 
         run: |
@@ -80,7 +79,7 @@ jobs:
           
       - name: Clone Device Tree
         run: |
-          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/.${{ github.event.inputs.TARGET_CODENAME }}
+          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
 
       - name: Build Progress
         run: |
