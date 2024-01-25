@@ -49,8 +49,8 @@ jobs:
           
       - name: Create Folder Recovery Build 
         run: |
-          sudo mkdir $PWDrecoveryBUILDER
-          cd $PWDrecoveryBUILDER
+          sudo mkdir $PWD/recoveryBUILDER
+          cd $PWD/recoveryBUILDER
 
       - name: Check Folder 
         run: |
