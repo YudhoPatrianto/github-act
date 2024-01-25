@@ -2,9 +2,6 @@ name: Build Recovery By YudhoPRJKT
 
 on:
   workflow_dispatch:
-    push:
-    branches:
-      - main
     inputs:
       CUSTOM_RECOVERY_URL:
         description: 'Put Your Target URL Recovery(example:https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp)'
