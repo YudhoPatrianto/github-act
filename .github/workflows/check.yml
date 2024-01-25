@@ -1,16 +1,61 @@
 name: CI Build - Push
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  inputs:
+    INPUT_DEVICE_TREE:
+      description: 'Input Your URL Device Tree'
+      required: true
+      
+    BRANCH_DEVICE_TREE:
+      description: 'Input Your Branch Device Tree'
+      required: true
 
+    TARGET_DEVICE_CODENAME:
+      description: 'Input Your Device Codename'
+      required: true
+
+    TARGET_BUILD_VARIANT:
+      description: 'bootimage= use boot.img for recovery & recoveryimage= use recovery.img for recovery & vendorbootimage= use vendor_boot.img for recovery'
+      required: true
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    steps:          
-      - name: Check Space 
+    steps:
+      - name: Update And Upgrade Dependency 
         run: |
-          df -h
+          sudo apt-get update
+          sudo apt-get upgrade -y
+          
+      - name: Installing Package And Repo
+        run: |
+          install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3
+          mkdir ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          sudo ln -sf ~/bin/repo /usr/bin/repo          
+          
+      - name: Create Directory TWRP 
+        run: |
+          mkdir recovery
+          cd recovery
+          
+      - name: Cloned Source With Depth
+        run: |
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+          
+      - name: Sync Source
+        run: |
+          repo sync -j$(nproc --all)
+          
+      - name: Clone Device Tree
+        run: |
+          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/.${{ github.event.inputs.TARGET_DEVICE_CODENAME }}
+
+      - name: Build Progress
+        run: |
+          source build/envsetup.sh
+          lunch twrp_${{ github.event.inputs.TARGET_DEVICE_CODENAME }}-eng
+          mka ${{ github.event.inputs.TARGET_BUILD_VARIANT }}
