@@ -1,8 +1,8 @@
-name: CI Build - Push
+name: Build Recovery
 
 on:
   workflow_dispatch:
-  inputs:
+    inputs:
     INPUT_DEVICE_TREE:
       description: 'Input Your URL Device Tree'
       required: true
