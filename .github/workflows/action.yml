@@ -26,7 +26,7 @@ on:
       TARGET_VARIANT_BUILD:
         description: 'bootimage(Recovery On boot.img) & recoveryimage(Recovery On recovery.img) & vendorbootimage(Recovery On vendor_boot.img)'
         required: true
-      
+
       USERNAME_GITHUB:
         description: 'Input Your Username Github'
         required: true
@@ -67,8 +67,8 @@ jobs:
           echo $PWD
       - name: Configuring Github
         run: | 
-          git config --global user.name ${{ github.event.inputs.USERNAME.GITHUB }}
-          git config --global user.email ${{ github.event.inputs.EMAIL.GITHUB }}
+          git config --global user.name ${{ github.event.inputs.USERNAME_GITHUB }}
+          git config --global user.email ${{ github.event.inputs.EMAIL_GITHUB }}
           
       - name: Cloned Source With Depth
         run: |
