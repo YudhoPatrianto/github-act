@@ -34,6 +34,14 @@ on:
       EMAIL_GITHUB:
         description: 'Input Your Email Github'
         required: true
+
+      TEST_COUNT:
+        description: 'Input Your API Key file.io'
+        required: false
+
+      API_KEY_FILEIO:
+        description: 'Input Your Test Count'
+        required: false
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
@@ -41,7 +49,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Cleanup Disk
+      - name: 💽Cleanup Disk
         uses: rokibhasansagar/slimhub_actions@main
       
       - name: Update And Upgrade Dependency 
@@ -49,7 +57,7 @@ jobs:
           sudo apt-get update
           sudo apt-get upgrade -y
           
-      - name: Installing Package And Repo
+      - name: 📦Installing Package And Repo
         run: |
           sudo apt install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3 -y
           mkdir ~/bin
@@ -57,32 +65,43 @@ jobs:
           chmod a+x ~/bin/repo
           sudo ln -sf ~/bin/repo /usr/bin/repo          
           
-      - name: Create Folder Recovery Build 
+      - name: 📦Create Folder Recovery Build 
         run: |
           sudo mkdir $HOME/twrp_${{ github.event.inputs.TARGET_CODENAME }} && cd $HOME/twrp_${{ github.event.inputs.TARGET_CODENAME }}
 
-      - name: Check Folder 
+      - name: 👁‍🗨Check Folder 
         run: |
           echo $PWD
-      - name: Configuring Github
+      - name: ⚙️Configuring Github
         run: | 
           git config --global user.name ${{ github.event.inputs.USERNAME_GITHUB }}
           git config --global user.email ${{ github.event.inputs.EMAIL_GITHUB }}
           
-      - name: Cloned Source With Depth
+      - name: 📦🔽Cloned Source With Depth
         run: |
           repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
           
-      - name: Sync Source
+      - name: 📦🔽Sync Source
         run: |
           repo sync -j$(nproc --all)
           
-      - name: Clone Device Tree
+      - name: 📱🔽Clone Device Tree
         run: |
           git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
 
-      - name: Build Progress
+      - name: 🔨Build Progress
         run: |
           source build/envsetup.sh
           lunch twrp_${{ github.event.inputs.TARGET_CODENAME }}-eng
           mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
+
+      - name: 📦🔼Upload Files Test
+        run: |
+          api_key='${{ github.event.inputs.API_KEY_FILEIO }}'
+          file_path='/home/runner/work/github-act/github-act/out/target/product/${{ github.event.inputs.TARGET_CODENAME }}/boot.img'
+          download_link=$(curl -s -F "file=@$file_path" "https://file.io/?key=$api_key" | jq -r '.link')
+          echo "File uploaded successfully. Download link: $download_link"
+
+
+          
+
