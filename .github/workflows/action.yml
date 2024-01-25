@@ -3,9 +3,9 @@ name: Build Recovery
 on:
   workflow_dispatch:
     inputs:
-    INPUT_DEVICE_TREE:
-      description: 'Input Your URL Device Tree'
-      required: true
+      CUSTOM_RECOVERY_URL:
+        description: 'CUSTOM_RECOVERY_URL (Put URL Recovery)'
+        required: true
       
     BRANCH_DEVICE_TREE:
       description: 'Input Your Branch Device Tree'
