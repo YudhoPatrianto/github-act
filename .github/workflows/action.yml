@@ -47,9 +47,14 @@ jobs:
           chmod a+x ~/bin/repo
           sudo ln -sf ~/bin/repo /usr/bin/repo          
           
-      - name: Create Directory TWRP 
+      - name: Create Folder Recovery Build 
         run: |
-          mkdir recovery_${{ github.event.inputs.TARGET_CODENAME }} && cd recovery_${{ github.event.inputs.TARGET_CODENAME }}
+          mkdir recovery_${{ github.event.inputs.TARGET_CODENAME }}
+          cd ${{ github.event.inputs.TARGET_CODENAME }}
+
+      - name: Check Folder 
+        run: |
+          echo $PWD
           
       - name: Cloned Source With Depth
         run: |
