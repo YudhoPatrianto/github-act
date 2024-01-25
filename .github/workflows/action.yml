@@ -49,7 +49,7 @@ jobs:
           
       - name: Create Directory TWRP 
         run: |
-          mkdir $PWD/recovery_${{ github.event.inputs.TARGET_CODENAME }} && cd $PWD/recovery_${{ github.event.inputs.TARGET_CODENAME }}
+          mkdir recovery_${{ github.event.inputs.TARGET_CODENAME }} && cd recovery_${{ github.event.inputs.TARGET_CODENAME }}
           
       - name: Cloned Source With Depth
         run: |
