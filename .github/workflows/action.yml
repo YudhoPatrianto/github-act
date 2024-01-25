@@ -16,7 +16,7 @@ on:
         required: true
 
       BRANCH_DEVICE_TREE:
-        description: 'Put Your Device Tree URL Recovery'
+        description: 'Put Your Branch Device Tree'
         required: true
 
       TARGET_CODENAME:
