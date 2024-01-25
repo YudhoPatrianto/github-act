@@ -34,6 +34,9 @@ jobs:
     permissions:
       contents: write
     steps:
+    - name: Cleanup
+      uses: rokibhasansagar/slimhub_actions@main
+      
       - name: Update And Upgrade Dependency 
         run: |
           sudo apt-get update
