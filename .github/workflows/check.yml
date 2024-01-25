@@ -1,0 +1,20 @@
+name: CI Build - Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Enter Directory Builder 
+        run: |
+          cd $GITHUB_WORKSPACE
+          
+      - name: Check Space 
+        run: |
+          df -h
