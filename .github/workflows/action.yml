@@ -1,6 +1,9 @@
 name: Build Recovery By YudhoPRJKT
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       CUSTOM_RECOVERY_URL:
