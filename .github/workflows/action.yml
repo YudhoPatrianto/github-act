@@ -4,24 +4,33 @@ on:
   workflow_dispatch:
     inputs:
       CUSTOM_RECOVERY_URL:
-        description: 'CUSTOM_RECOVERY_URL (Put URL Recovery)'
+        description: 'Put Your Target URL Recovery(example:https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp)'
+        required: true
+
+      CUSTOM_RECOVERY_BRANCH:
+        description: 'Put Your Target Branch Recovery'
         required: true
       
-    BRANCH_DEVICE_TREE:
-      description: 'Input Your Branch Device Tree'
-      required: true
+      DEVICE_TREE_URL:
+        description: 'Put Your Device Tree URL Recovery'
+        required: true
 
-    TARGET_DEVICE_CODENAME:
-      description: 'Input Your Device Codename'
-      required: true
+      BRANCH_DEVICE_TREE:
+        description: 'Put Your Device Tree URL Recovery'
+        required: true
 
-    TARGET_BUILD_VARIANT:
-      description: 'bootimage= use boot.img for recovery & recoveryimage= use recovery.img for recovery & vendorbootimage= use vendor_boot.img for recovery'
-      required: true
+      TARGET_CODENAME:
+        description: 'Put Your Device Codename'
+        required: true
+
+      TARGET_VARIANT_BUILD:
+        description: 'bootimage(Recovery On boot.img) & recoveryimage(Recovery On recovery.img) & vendorbootimage(Recovery On vendor_boot.img)'
+        required: true
+
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
     steps:
@@ -40,12 +49,12 @@ jobs:
           
       - name: Create Directory TWRP 
         run: |
-          mkdir recovery
-          cd recovery
+          mkdir recovery_${{ github.event.inputs.TARGET_CODENAME }}
+          cd ${{ github.event.inputs.TARGET_CODENAME }}
           
       - name: Cloned Source With Depth
         run: |
-          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+          repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
           
       - name: Sync Source
         run: |
@@ -53,10 +62,10 @@ jobs:
           
       - name: Clone Device Tree
         run: |
-          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/.${{ github.event.inputs.TARGET_DEVICE_CODENAME }}
+          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/.${{ github.event.inputs.TARGET_CODENAME }}
 
       - name: Build Progress
         run: |
           source build/envsetup.sh
-          lunch twrp_${{ github.event.inputs.TARGET_DEVICE_CODENAME }}-eng
-          mka ${{ github.event.inputs.TARGET_BUILD_VARIANT }}
+          lunch twrp_${{ github.event.inputs.TARGET_CODENAME }}-eng
+          mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
