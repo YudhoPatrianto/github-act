@@ -26,7 +26,14 @@ on:
       TARGET_VARIANT_BUILD:
         description: 'bootimage(Recovery On boot.img) & recoveryimage(Recovery On recovery.img) & vendorbootimage(Recovery On vendor_boot.img)'
         required: true
+      
+      USERNAME_GITHUB:
+        description: 'Input Your Username Github'
+        required: true
 
+      EMAIL_GITHUB:
+        description: 'Input Your Email Github'
+        required: true
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
@@ -58,6 +65,10 @@ jobs:
       - name: Check Folder 
         run: |
           echo $PWD
+      - name: Configuring Github
+        run: | 
+          git config --global user.name ${{ github.event.inputs.USERNAME.GITHUB }}
+          git config --global user.email ${{ github.event.inputs.EMAIL.GITHUB }}
           
       - name: Cloned Source With Depth
         run: |
