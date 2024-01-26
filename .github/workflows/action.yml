@@ -51,6 +51,10 @@ jobs:
     steps:
       - name: 💽Cleanup Disk
         uses: rokibhasansagar/slimhub_actions@main
+        with:
+          silent: true
+        run: |
+        echo Done Cleanup Disk
       
       - name: Update And Upgrade Dependency 
         run: |
