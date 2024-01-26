@@ -50,9 +50,6 @@ jobs:
       contents: write
     steps:
       - name: 💽Cleanup Disk
-        uses: rokibhasansagar/slimhub_actions@main
-        with:
-          silent: true
         run: |
           rokibhasansagar/slimhub_actions/cleanup.sh > /dev/null 2>&1
           echo "Done Cleaning Disk"
