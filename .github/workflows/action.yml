@@ -54,7 +54,8 @@ jobs:
         with:
           silent: true
         run: |
-          echo "Done Cleanup Disk"
+          rokibhasansagar/slimhub_actions/cleanup.sh > /dev/null 2>&1
+          echo "Done Cleaning Disk"
       
       - name: Update And Upgrade Dependency 
         run: |
