@@ -27,10 +27,6 @@ on:
         description: 'bootimage(Recovery On boot.img) & recoveryimage(Recovery On recovery.img) & vendorbootimage(Recovery On vendor_boot.img)'
         required: true
 
-      TARGET_LUNCH:
-        description: 'Put Your Device Codename'
-        required: true
-
       USERNAME_GITHUB:
         description: 'Input Your Username Github'
         required: true
@@ -96,7 +92,7 @@ jobs:
       - name: 🔨Build Progress
         run: |
           source build/envsetup.sh
-          lunch ${{ github.event.inputs.TARGET_LUNCH }}_${{ github.event.inputs.TARGET_CODENAME }}-eng
+          lunch pb_${{ github.event.inputs.TARGET_CODENAME }}-eng
           mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
 
       - name: 📦🔼Upload Files Test
