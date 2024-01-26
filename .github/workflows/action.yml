@@ -68,6 +68,7 @@ jobs:
       - name: 📦Create Folder Recovery Build 
         run: |
           sudo mkdir $HOME/twrp_${{ github.event.inputs.TARGET_CODENAME }} && cd $HOME/twrp_${{ github.event.inputs.TARGET_CODENAME }}
+          mkdir -p out/target/product/fire/root
 
       - name: 👁‍🗨Check Folder 
         run: |
