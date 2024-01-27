@@ -27,14 +27,6 @@ on:
         description: 'bootimage(Recovery On boot.img) & recoveryimage(Recovery On recovery.img) & vendorbootimage(Recovery On vendor_boot.img)'
         required: true
 
-      USERNAME_GITHUB:
-        description: 'Input Your Username Github'
-        required: true
-
-      EMAIL_GITHUB:
-        description: 'Input Your Email Github'
-        required: true
-
       TOKEN_BOT_TELEGRAM:
         description: 'Input Your TOKEN BOT Telegram'
         required: false
