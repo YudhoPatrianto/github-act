@@ -50,64 +50,67 @@ jobs:
       
       - name: Update And Upgrade Dependency 
         run: |
-          sudo apt-get update
-          sudo apt-get upgrade -y
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
           -d "text=<b>📦Upgrading And Updating Packages</b>" \
           -d parse_mode=HTML
-          
+          sudo apt-get update
+          sudo apt-get upgrade -y
+
       - name: 📦Installing Package And Repo
         run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📦Installing Package And Repo</b>" \
+          -d parse_mode=HTML
           sudo apt install jq curl gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3 python2 python-is-python3 rsync -y
           mkdir ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
           sudo ln -sf ~/bin/repo /usr/bin/repo         
-          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
-          -d "text=<b>📦Installing Package And Repo</b>" \
-          -d parse_mode=HTML
+
           
       - name: 📦Create Folder Recovery Build 
         run: |
-          mkdir -p out/target/product/fire/root
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
           -d "text=<b>📦Creating Folder Recovery Build</b>" \
           -d parse_mode=HTML
+          mkdir -p out/target/product/fire/root
+          
 
       - name: 👁‍🗨Check Folder 
         run: |
-          echo $PWD
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
           -d "text=<b>👁‍🗨Checking Folder </b>" \
           -d parse_mode=HTML
+          echo $PWD
           
       - name: 📦🔽Cloned Source With Depth
         run: |
-          repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
           -d "text=<b>📦🔽Cloned Source With Depth</b>" \
           -d parse_mode=HTML
+          repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
+
           
       - name: 📦🔽Sync Source
         run: |
-          repo sync -j$(nproc --all)
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
           -d "text=<b>📦🔽Syncing Source</b>" \
           -d parse_mode=HTML
-          
+          repo sync -j$(nproc --all)
+
       - name: 📱🔽Clone Device Tree
         run: |
-          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
           -d "text=<b>📱🔽Cloning Device Tree</b>" \
           -d parse_mode=HTML
+          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
 
       - name: 🤖Notify Bot
         run: |
