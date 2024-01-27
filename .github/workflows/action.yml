@@ -68,10 +68,6 @@ jobs:
       - name: 👁‍🗨Check Folder 
         run: |
           echo $PWD
-      - name: ⚙️Configuring Github
-        run: | 
-          git config --global user.name ${{ github.event.inputs.USERNAME_GITHUB }}
-          git config --global user.email ${{ github.event.inputs.EMAIL_GITHUB }}
           
       - name: 📦🔽Cloned Source With Depth
         run: |
@@ -85,7 +81,7 @@ jobs:
         run: |
           git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
 
-      - name: Notify Bot
+      - name: 🤖Notify Bot
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }} > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
