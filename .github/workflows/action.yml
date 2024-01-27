@@ -35,12 +35,16 @@ on:
         description: 'Input Your Email Github'
         required: true
 
-      TEST_COUNT:
-        description: 'Input Your API Key file.io'
+      TOKEN_BOT_TELEGRAM:
+        description: 'Input Your TOKEN BOT Telegram'
+        required: false
+
+      CHATID_BOT_TELEGRAM:
+        description: 'Input Your ChatID Telegram'
         required: false
 
       API_KEY_FILEIO:
-        description: 'Input Your Test Count'
+        description: 'Input Your API KEY Fileio'
         required: false
 jobs:
   build:
@@ -88,6 +92,13 @@ jobs:
       - name: 📱🔽Clone Device Tree
         run: |
           git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
+
+      - name: Notify Bot
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }} > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>🔨Build Started</b>" \
+          -d parse_mode=HTML
 
       - name: 🔨Build Progress
         run: |
