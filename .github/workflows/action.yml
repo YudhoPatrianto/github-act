@@ -83,10 +83,7 @@ jobs:
 
       - name: 🤖Notify Bot
         run: |
-          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }} > /dev/null 2>&1 \
-          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
-          -d "text=<b>🔨Build Started</b>" \
-          -d parse_mode=HTML
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }} > /dev/null 2>&1 -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} -d "text=<b>🔨Build Started</b>" -d parse_mode=HTML
 
       - name: 🔨Build Progress
         run: |
