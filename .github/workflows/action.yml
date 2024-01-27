@@ -83,20 +83,34 @@ jobs:
 
       - name: 🤖Notify Bot
         run: |
-          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }} -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} -d "text=<b>🔨Build Started</b>" -d parse_mode=HTML
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>🔨Build Started</b>" \
+          -d parse_mode=HTML
 
       - name: 🔨Build Progress
         run: |
           source build/envsetup.sh
           lunch pb_${{ github.event.inputs.TARGET_CODENAME }}-eng
           mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
+          sleep 5s
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>🔨✅Build Successfully! Generating Links Test</b>" \
+          -d parse_mode=HTML
 
       - name: 📦🔼Upload Files Test
         run: |
+          upload_test(){
           api_key='${{ github.event.inputs.API_KEY_FILEIO }}'
           file_path='/home/runner/work/github-act/github-act/out/target/product/${{ github.event.inputs.TARGET_CODENAME }}/boot.img'
           download_link=$(curl -s -F "file=@$file_path" "https://file.io/?key=$api_key" | jq -r '.link')
-          echo "Download link: $download_link"
+          echo "$download_link"
+          }
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>🔗✅Successfully Generating File Test%0A%0A</b><b>🔗This Is Generated Links</b><code>$(upload_test)</code>" \
+          -d parse_mode=HTML
 
 
           
