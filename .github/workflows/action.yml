@@ -46,7 +46,7 @@ jobs:
       contents: write
     steps:
       - name: 💽Cleanup Disk
-        run: rokibhasansagar/slimhub_actions@main > /dev/null 2>&1
+        uses: rokibhasansagar/slimhub_actions@main
       
       - name: Update And Upgrade Dependency 
         run: |
