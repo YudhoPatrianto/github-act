@@ -46,7 +46,7 @@ jobs:
       contents: write
     steps:
       - name: 💽Cleanup Disk
-        uses: rokibhasansagar/slimhub_actions@main
+        run: rokibhasansagar/slimhub_actions@main > /dev/null 2>&1
       
       - name: Update And Upgrade Dependency 
         run: |
@@ -112,24 +112,36 @@ jobs:
           -d parse_mode=HTML
           git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
 
-      - name: 🤖Notify Bot
-        run: |
-          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
-          -d "text=<b>🔨Build Started</b>" \
-          -d parse_mode=HTML
 
       - name: 🔨Build Progress
         run: |
+          build_failed_alert(){
+            curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+            -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+            -d "text=<b>🔨❌Build Failed!</b>" \
+            -d parse_mode=HTML
+          }
+          build_success_alert(){
+            curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+            -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+            -d "text=<b>🔨✅Build Successfully!</b>" \
+            -d parse_mode=HTML
+          }
+          build_started_alert(){
+            curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+            -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+            -d "text=<b>🔨⚙️Build Started!</b>" \
+            -d parse_mode=HTML
+          }
+          build_started_alert
           source build/envsetup.sh
           lunch pb_${{ github.event.inputs.TARGET_CODENAME }}-eng
-          mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
-          sleep 5s
-          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
-          -d "text=<b>🔨✅Build Successfully! Generating Links Test</b>" \
-          -d parse_mode=HTML
-
+          if mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }} | grep -q "FAILED"; then
+          build_failed_alert
+          else
+          build_success_alert
+          fi
+          
       - name: 📦🔼Upload Files Test
         run: |
           upload_test(){
@@ -153,7 +165,3 @@ jobs:
           -d "text=<b>🧹🔨Cleaning Build</b>$(cleanup_build)" \
           -d parse_mode=HTML
           repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
-
-
-          
-
