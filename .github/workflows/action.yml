@@ -136,12 +136,14 @@ jobs:
           build_started_alert
           source build/envsetup.sh
           lunch pb_${{ github.event.inputs.TARGET_CODENAME }}-eng
+          build_check(){
           if mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }} | grep -q "FAILED"; then
           build_failed_alert
           else
           build_success_alert
           fi
-          
+          }
+          build_check
       - name: 📦🔼Upload Files Test
         run: |
           upload_test(){
