@@ -1,6 +1,5 @@
 name: checkcpu
 
-on:
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
