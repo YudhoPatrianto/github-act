@@ -9,6 +9,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Get Files
+        uses: actions/checkout@main
+        
       - name: check
         run: |
           ls
