@@ -1,0 +1,14 @@
+name: checkcpu
+
+on:
+jobs:
+  build:
+    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: check all
+        run: |
+          echo $(nproc --all)
+          echo $(free -h)
