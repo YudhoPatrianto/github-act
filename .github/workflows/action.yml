@@ -148,7 +148,7 @@ jobs:
           }
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
           -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
-          -d "text=<b>🔗✅Successfully Generating File Test%0A%0A</b><b>🔗This Is Generated Links:</b> %0A<pre>$(upload_test)</pre>" \
+          -d "text=<b>🔗✅Successfully Generating File Test%0A%0A</b><pre>🔗This Is Generated Links:</pre> %0A<code>$(upload_test)</code>" \
           -d parse_mode=HTML
 
       - name: 🧹🔨Cleanup Build
