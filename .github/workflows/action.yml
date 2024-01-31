@@ -67,7 +67,7 @@ jobs:
       - name: Cleanup Disk
         run: |
           chmod 777 clean_disk.sh
-          sudo bash clean_disk.sh > /dev/null 2>&1
+          sudo bash clean_disk.sh
           echo "Cleanup Disk Done"
 
       # Update And Upgrade Dependency
