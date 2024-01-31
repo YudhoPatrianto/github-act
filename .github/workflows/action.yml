@@ -3,52 +3,41 @@ name: Build Recovery By YudhoPRJKT
 on:
   workflow_dispatch:
     inputs:
-      RECOVERY_SELECTOR:
-        description: 'Choose Your Custom Recovery '
-        type: choice
-        options:
-          - TWRP(twrp-12.1)
-          - PBRP(android-12.1)
-      TOKEN_BOT_TELEGRAM:
-        description: 'Input Your TOKEN Bot Telegram'
+      CUSTOM_RECOVERY_URL:
+        description: 'Put Your Target URL Recovery(example:https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp)'
         required: true
-      CHAT_ID_BOT_TELEGRAM:
-        description: 'Input Your ChatID In Telegram'
-        required: true
-      DEVICE_CODENAME:
-        description: 'Input Your Device CODENAME'
-        required: true
-      API_KEY_FILEIO:
-        description: 'Input Your API Key file.io'
-        required: true
-      DEVICE_TREE_URL:
-        description: 'Input Your Device Tree URL'
-        required: true
-      DEVICE_TREE_BRANCH:
-        description: 'Input Your Device Tree Branch'
-        required: true
-      TARGET_COMMON_LUNCH:
-        description: 'Choose Your Lunch'
-        required: true
-        type: choice
-        options:
-          - twrp(TWRP)
-          - pb(PBRP)
-      TARGET_VARIANT:
-        description: 'Choose Your Build Variant'
-        required: true
-        type: choice
-        options:
-          - bootimage(boot.img)
-          - recoveryimage(recovery.img)
-          - vendorboot(vendor_boot.img)
-      TARGET_BRAND_SELECTOR:
-        description: 'Choose Your Brand Phone'
-        required: true
-        type: choice
-        options:
-          - xiaomi(Xiaomi)
 
+      CUSTOM_RECOVERY_BRANCH:
+        description: 'Put Your Target Branch Recovery'
+        required: true
+      
+      DEVICE_TREE_URL:
+        description: 'Put Your Device Tree URL Recovery'
+        required: true
+
+      BRANCH_DEVICE_TREE:
+        description: 'Put Your Branch Device Tree'
+        required: true
+
+      TARGET_CODENAME:
+        description: 'Put Your Device Codename'
+        required: true
+
+      TARGET_VARIANT_BUILD:
+        description: 'bootimage(Recovery On boot.img) & recoveryimage(Recovery On recovery.img) & vendorbootimage(Recovery On vendor_boot.img)'
+        required: true
+
+      TOKEN_BOT_TELEGRAM:
+        description: 'Input Your TOKEN BOT Telegram'
+        required: false
+
+      CHATID_BOT_TELEGRAM:
+        description: 'Input Your ChatID Telegram'
+        required: false
+
+      API_KEY_FILEIO:
+        description: 'Input Your API KEY Fileio'
+        required: false
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
@@ -56,106 +45,119 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: 💽Cleanup Disk
+        uses: rokibhasansagar/slimhub_actions@main
       
-      - name: Check Files
+      - name: Update And Upgrade Dependency 
         run: |
-          ls
-
-      # Cleanup Disk
-      - name: Cleanup Disk
-        run: |
-          chmod 777 clean_disk.sh
-          sudo bash clean_disk.sh
-          echo "Cleanup Disk Done"
-
-      # Update And Upgrade Dependency
-      - name: Update And Upgrade Repository
-        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📦Upgrading And Updating Packages</b>" \
+          -d parse_mode=HTML
           sudo apt-get update
           sudo apt-get upgrade -y
 
-      # Installing Dependencies
-      - name: Installing Package
+      - name: 📦Installing Package And Repo
         run: |
-          sudo apt-get install jq curl gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3 python2 python-is-python3 rsync -y
-      
-      # Installing Repo
-      - name: Installing Repo
-        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📦Installing Package And Repo</b>" \
+          -d parse_mode=HTML
+          sudo apt install jq curl gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3 python2 python-is-python3 rsync -y
           mkdir ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
-          sudo ln -sf ~/bin/repo /usr/bin/repo    
+          sudo ln -sf ~/bin/repo /usr/bin/repo         
 
-      # Sync Recovery Source
-      - name: Sync Recovery
-        run: |
-          case "${{ github.event.inputs.RECOVERY_SELECTOR }}" in
-            "TWRP(twrp-12.1)")
-              # Sync TWRP Branch twrp-12.1
-              repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
-
-              # Notify Recovery Detail
-              curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-              -d chat_id=${{ github.event.inputs.CHAT_ID_BOT_TELEGRAM }} \
-              -d "text=<b>Recovery Details</b>%0A%0A<b>URL Recovery:</b> <code>https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git</code> \
-              <b>Branch Recovery:</b> <code>twrp-12.1</code>"
-              ;;
-            "PBRP(android-12.1)")
-              # Sync TWRP Branch twrp-12.1
-              repo init -u https://github.com/PitchBlackRecoveryProject/manifest_pb -b android-12.1
-
-              # Notify Recovery Detail
-              curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-              -d chat_id=${{ github.event.inputs.CHAT_ID_BOT_TELEGRAM }} \
-              -d "text=<b>Recovery Details</b>%0A%0A<b>URL Recovery:</b> <code>https://github.com/PitchBlackRecoveryProject/manifest_pb</code> \
-              <b>Branch Recovery:</b> <code>android-12.1</code>"
-              ;;
-            *)
-              echo "Unable To Sync Recovery! "
-              # Notify Recovery Detail
-              curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-              -d chat_id=${{ github.event.inputs.CHAT_ID_BOT_TELEGRAM }} \
-              -d "text=<b>Unable To Re</b>"
-              ;;
-          esac
-
-      - name: Send Full Specs To BOT
+          
+      - name: 📦Create Folder Recovery Build 
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
-          -d chat_id=${{ github.event.inputs.CHAT_ID_BOT_TELEGRAM }} \
-          -d "text=<b>YudhoPRJKT-BOT</b>%0A \
-          <pre>Specs Information</pre>%0A \
-          <b>Users:<b> <code>$(whoami)</code> \
-          <b>CPU:<b> <code>$(lscpu | grep 'Model name' | awk -F: '{print $2}' | xargs)</code> \
-          <b>Kernel:<b> <code>$(uname -r)</code> \
-          <b>OS:<b> <code>$(lsb_release -a 2>/dev/null | awk '/Description/ {print $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}')</code>"
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📦Creating Folder Recovery Build</b>" \
+          -d parse_mode=HTML
+          mkdir -p out/target/product/fire/root
+          
 
-    # Build Process
-      - name: Build Process
+      - name: 👁‍🗨Check Folder 
         run: |
-          case "${{ github.event.inputs.TARGET_COMMON_LUNCH }}" in
-            "twrp(TWRP)")
-              # Build
-              source build/envsetup.sh
-              lunch twrp_${{ github.event.inputs.DEVICE_CODENAME }}-eng
-              case "${{ github.event.inputs.TARGET_VARIANT }} " in
-              "bootimage(boot.img)")
-              ;;
-            *)
-              echo "Unable To Build!"
-              ;;
-          esac
-              ;;
-            "tes123")
-              echo "ini dari tes123 input"
-              ;;
-            "hai")
-              echo "ini dari hai input"
-              ;;
-            *)
-              echo "gagal"
-              ;;
-          esac
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>👁‍🗨Checking Folder </b>" \
+          -d parse_mode=HTML
+          echo $PWD
+          
+      - name: 📦🔽Cloned Source With Depth
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📦🔽Cloned Source With Depth</b>" \
+          -d parse_mode=HTML
+          repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
+
+          
+      - name: 📦🔽Sync Source
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📦🔽Syncing Source</b>" \
+          -d parse_mode=HTML
+          repo sync -j$(nproc --all)
+
+      - name: 📱🔽Clone Device Tree
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>📱🔽Cloning Device Tree</b>" \
+          -d parse_mode=HTML
+          git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.BRANCH_DEVICE_TREE }} device/xiaomi/${{ github.event.inputs.TARGET_CODENAME }}
+
+
+      - name: 🔨Build Progress
+        run: |
+          build_failed_alert(){
+            curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+            -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+            -d "text=<b>🔨❌Build Failed!</b>" \
+            -d parse_mode=HTML
+          }
+          build_success_alert(){
+            curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+            -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+            -d "text=<b>🔨✅Build Successfully!</b>" \
+            -d parse_mode=HTML
+          }
+          build_started_alert(){
+            curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+            -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+            -d "text=<b>🔨⚙️Build Started!</b>" \
+            -d parse_mode=HTML
+          }
+          build_started_alert
+          source build/envsetup.sh
+          lunch omni_${{ github.event.inputs.TARGET_CODENAME }}-eng
+          mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
+          
+      - name: 📦🔼Upload Files Test
+        run: |
+          upload_test(){
+          api_key='${{ github.event.inputs.API_KEY_FILEIO }}'
+          file_path='/home/runner/work/github-act/github-act/out/target/product/${{ github.event.inputs.TARGET_CODENAME }}/boot.img'
+          download_link=$(curl -s -F "file=@$file_path" "https://file.io/?key=$api_key" | jq -r '.link')
+          echo "$download_link"
+          }
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>🔗✅Successfully Generating File Test%0A%0A</b><pre>🔗This Is Generated Links:</pre> %0A<code>$(upload_test)</code>" \
+          -d parse_mode=HTML
+
+      - name: 🧹🔨Cleanup Build
+        run: |
+          cleanup_build(){
+          rm -rf out/
+          }
+          curl -s -X POST https://api.telegram.org/bot${{ github.event.inputs.TOKEN_BOT_TELEGRAM }}/sendMessage > /dev/null 2>&1 \
+          -d chat_id=${{ github.event.inputs.CHATID_BOT_TELEGRAM }} \
+          -d "text=<b>🧹🔨Cleaning Build</b>$(cleanup_build)" \
+          -d parse_mode=HTML
+          repo init --depth=1 -u ${{ github.event.inputs.CUSTOM_RECOVERY_URL }}.git -b ${{ github.event.inputs.CUSTOM_RECOVERY_BRANCH }}
