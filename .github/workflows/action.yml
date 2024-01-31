@@ -58,6 +58,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: Check Files
+        run: |
+          ls
 
       # Cleanup Disk
       - name: Cleanup Disk
