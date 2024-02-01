@@ -135,7 +135,7 @@ jobs:
           }
           build_started_alert
           source build/envsetup.sh
-          lunch pb_${{ github.event.inputs.TARGET_CODENAME }}-eng
+          lunch twrp_${{ github.event.inputs.TARGET_CODENAME }}-eng
           mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
           
       - name: 📦🔼Upload Files Test
