@@ -141,8 +141,10 @@ jobs:
       - name: 📦🔼Upload Files Test
         run: |
           upload_test(){
+          mkdir -p /home/runner/work/github-act/github-act/uploads
+          mv /home/runner/work/github-act/github-act/out/target/product/${{ github.event.inputs.TARGET_CODENAME }}/boot.img /home/runner/work/github-act/github-act/uploads/PBRP_fire-$(date +"%Y-%m-%d %H:%M:%S" | cut -d ' ' -f 2 | sed 's/:/-/g').img
           api_key='${{ github.event.inputs.API_KEY_FILEIO }}'
-          file_path='/home/runner/work/github-act/github-act/out/target/product/${{ github.event.inputs.TARGET_CODENAME }}/boot.img'
+          file_path='/home/runner/work/github-act/github-act/uploads/*.img'
           download_link=$(curl -s -F "file=@$file_path" "https://file.io/?key=$api_key" | jq -r '.link')
           echo "$download_link"
           }
