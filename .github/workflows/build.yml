@@ -35,7 +35,7 @@ on:
         description: 'Input Your ChatID Telegram'
         required: false
 
-       API_KEY_FILEIO:
+      API_KEY_FILEIO:
         description: 'Input Your API KEY Fileio'
         required: false
 jobs:
