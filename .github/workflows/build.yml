@@ -35,7 +35,7 @@ on:
         description: 'Input Your ChatID Telegram'
         required: false
 
-      API_KEY_FILEIO:
+       :
         description: 'Input Your API KEY Fileio'
         required: false
 jobs:
@@ -135,7 +135,7 @@ jobs:
           }
           build_started_alert
           source build/envsetup.sh
-          lunch twrp_${{ github.event.inputs.TARGET_CODENAME }}-eng
+          lunch pb_${{ github.event.inputs.TARGET_CODENAME }}-eng
           mka ${{ github.event.inputs.TARGET_VARIANT_BUILD }}
           
       - name: 📦🔼Upload Files Test
